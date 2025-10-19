@@ -24,16 +24,17 @@ nav {
     padding: 0px;
     margin: 0px;
     overflow: hidden;
-    display: inline-flex;
-    gap: 16px;
 }
 
 .navbar a {
-    color: rgb(51, 0, 111);
     text-decoration: none;
-    font-size: 1.1em;
-    font-weight: 500;
-    transition: color 0.2s;
+    display: block;
+    padding: 5px;
+    text-align: center;
+}
+
+.navbar li {
+    float: inline-start;
 }
 
 h2 {
@@ -103,73 +104,6 @@ h2 {
 
 #logoutBtn:hover {
   color: rgb(102, 0, 222);
-}
-
-.navbar a,
-.navbar a:link,
-.navbar a:visited { color: rgb(51, 0, 111); }
-
-.navbar a:hover,
-.navbar a:active { color: rgb(102, 0, 222); }
-
-.profile-card {
-  max-width: 520px;
-  margin: 1.5rem auto;
-  background: #fff;
-  border-radius: 12px;
-  padding: 16px;
-}
-
-.row {
-  display: flex;
-  gap: 12px;
-  margin: 0.5rem 0;
-  align-items: center;
-}
-
-.row label {
-  width: 110px;
-  text-align: right;
-}
-
-.row input {
-  flex: 1;
-  padding: 8px;
-}
-
-.avatar {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  object-fit: cover;
-  background: #eee;
-}
-
-.actions {
-  display: flex;
-  gap: 10px;
-  justify-content: flex-end;
-  margin-top: 10px;
-}
-
-.btn {
-  padding: 10px 14px;
-  border-radius: 8px;
-  border: none;
-  background: #4f46e5;
-  color: #fff;
-  cursor: pointer;
-}
-
-.btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-#msg {
-  min-height: 1.2rem;
-  margin-top: 8px;
-  text-align: center;
 }
 
 .navwrap {
