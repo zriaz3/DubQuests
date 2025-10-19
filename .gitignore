@@ -26,10 +26,6 @@ Thumbs.db
 *.tmp
 *.swp
 
-# Docker
-docker-compose.override.yml
-*.pid
-
 # IDE/editor settings
 .vscode/
 .idea/
