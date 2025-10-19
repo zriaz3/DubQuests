@@ -93,3 +93,15 @@ h2 {
   text-align: center;
   transition: 0.3s;
 }
+
+#logoutBtn {
+  color: rgb(51, 0, 111);
+  background: none;
+  border: none;
+  font-size: 1em;
+  cursor: pointer;
+}
+
+#logoutBtn:hover {
+  color: rgb(102, 0, 222);
+}

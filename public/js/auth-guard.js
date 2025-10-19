@@ -1,7 +1,7 @@
 // public/js/auth-guard.js
 import { api, auth } from './app-api.js';
 
-const SIGN_IN_PAGE = '/sign_in.html';   // adjust path if needed
+const SIGN_IN_PAGE = '/index.html';   
 
 export async function requireLogin() {
   if (!auth.token()) {
