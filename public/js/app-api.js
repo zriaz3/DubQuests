@@ -24,5 +24,21 @@ export const api = {
   login: (identifier, password) =>
     request('/auth/login', { method: 'POST', body: { identifier, password } }),
   me: () => request('/me', { authRequired: true }),
-  // ... (rest unchanged)
-};
+  // get a signed PUT URL for images (reuses your existing endpoint)
+
+    getUploadUrl: (filename, contentType) =>
+    request('/photos/upload-url', {
+        method: 'POST',
+        authRequired: true,
+        body: { filename, contentType }
+    }),
+
+    // update my profile fields (name, username, email, optional avatarKey)
+    updateMe: (body) =>
+    request('/me', { method: 'PUT', authRequired: true, body }),
+
+    // fetch my avatar signed URL (if any)
+    meAvatarUrl: () =>
+    request('/me/avatar-url', { authRequired: true }),
+    };
+

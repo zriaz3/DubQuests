@@ -112,6 +112,13 @@ const PhotoCreateSchema = z.object({
 const FriendReqSchema = z.object({ userId: z.string().uuid() });
 const FriendAcceptSchema = z.object({ friendshipId: z.string().uuid() });
 
+const UpdateMeSchema = z.object({
+  name: z.string().trim().min(1).max(120),
+  username: z.string().trim().min(3).max(30).regex(/^[a-z0-9_]+$/i),
+  email: z.string().email(),
+  avatarKey: z.string().min(1).optional()
+});
+
 /* ---------- Auth Routes ---------- */
 // REGISTER: creates user with name, username, email, password
 app.post('/auth/register', async (req, res) => {
@@ -176,6 +183,43 @@ app.get('/me', auth, async (req, res) => {
   if (!rows[0]) return res.status(404).json({ error: 'Not found' });
   res.json({ user: rows[0] });
 });
+
+// UPDATE my profile (name, username, email, avatar)
+app.put('/me', auth, async (req, res) => {
+  const parsed = UpdateMeSchema.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ error: 'Validation failed' });
+  const { name, username, email, avatarKey } = parsed.data;
+
+  try {
+    const { rows } = await pool.query(
+      `UPDATE users
+         SET name=$1, username=$2, email=lower($3), avatar_key = COALESCE($4, avatar_key)
+       WHERE id=$5
+       RETURNING id, name, username, email, avatar_key`,
+      [name, username, email, avatarKey || null, req.user.uid]
+    );
+    res.json({ user: rows[0] });
+  } catch (e) {
+    if (e.code === '23505') {
+      const detail = (e.detail || '').toLowerCase();
+      if (detail.includes('username')) return res.status(409).json({ error: 'Username already taken' });
+      return res.status(409).json({ error: 'Email already exists' });
+    }
+    console.error(e);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+app.get('/me/avatar-url', auth, async (req, res) => {
+  const { rows } = await pool.query('SELECT avatar_key FROM users WHERE id=$1', [req.user.uid]);
+  const key = rows[0]?.avatar_key;
+  if (!key) return res.json({ url: null });
+
+  const cmd = new GetObjectCommand({ Bucket: BUCKET, Key: key });
+  const url = await getSignedUrl(s3, cmd, { expiresIn: SIGNED_TTL });
+  res.json({ url, expiresIn: SIGNED_TTL });
+});
+
 
 /* ---------- Friendships ---------- */
 app.post('/friends/request', auth, async (req, res) => {

@@ -1,20 +1,131 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DubQuests | Profile</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    .profile-card { max-width: 520px; margin: 1.5rem auto; background:#fff; border-radius:12px; padding:16px; }
+    .row { display:flex; gap:12px; margin:.5rem 0; align-items:center; }
+    .row label { width:110px; text-align:right; }
+    .row input { flex:1; padding:8px; }
+    .avatar { width:120px; height:120px; border-radius:50%; object-fit:cover; background:#eee; }
+    .actions { display:flex; gap:10px; justify-content:flex-end; margin-top: 10px; }
+    .btn { padding:10px 14px; border-radius:8px; border:none; background:#4f46e5; color:#fff; cursor:pointer; }
+    .btn:disabled { opacity:.6; cursor:not-allowed; }
+    #msg { min-height:1.2rem; margin-top:8px; text-align:center; }
+    .navwrap { text-align:center; margin-bottom:8px; }
+    .navwrap a { margin-right:12px; color:rgb(51,0,111); text-decoration:none; }
+  </style>
 </head>
-    
 <body>
-    <button id="logoutBtn">Logout</button>
-    <script type="module">
-        import { logout } from './js/auth-guard.js';
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-        logout();
-        });
-    </script>
-</body>
+  <header>DubQuests</header>
+  <h3 id="subtitle">Your Profile</h3>
+  <div class="navwrap">
+    <a href="main.html">Home</a>
+    <a href="friends.html">Friends</a>
+    <a href="journal.html">Journal</a>
+    <a href="memories.html">Memories</a>
+    <a href="profile.html">Profile</a>
+    <a href="#" id="logoutBtn">Logout</a>
+  </div>
+  <hr/>
 
+  <div class="profile-card">
+    <div class="row" style="justify-content:center;">
+      <img id="avatar" class="avatar" alt="Profile picture">
+    </div>
+    <div class="row" style="justify-content:center;">
+      <input id="file" type="file" accept="image/*">
+      <button id="uploadBtn" class="btn" type="button">Upload New Picture</button>
+    </div>
+
+    <div class="row">
+      <label for="name">Name</label>
+      <input id="name" type="text" required>
+    </div>
+    <div class="row">
+      <label for="username">Username</label>
+      <input id="username" type="text" required>
+    </div>
+    <div class="row">
+      <label for="email">Email</label>
+      <input id="email" type="email" required>
+    </div>
+
+    <div class="actions">
+      <button id="saveBtn" class="btn" type="button">Save Changes</button>
+    </div>
+    <div id="msg"></div>
+  </div>
+
+  <script type="module">
+    import { requireLogin, logout } from './js/auth-guard.js';
+    import { api, auth } from './js/app-api.js';
+
+    // --- small helpers ---
+    const $ = (id) => document.getElementById(id);
+    const show = (t, ok=true) => { const m = $('msg'); m.textContent = t; m.style.color = ok ? 'green' : 'crimson'; };
+
+    // --- logout link ---
+    document.getElementById('logoutBtn').addEventListener('click', (e) => { e.preventDefault(); logout(); });
+
+    // --- state ---
+    let currentAvatarKey = null;
+
+    // --- load me ---
+    const me = await requireLogin(); // redirects if not signed in
+    if (me) {
+      $('name').value = me.user.name;
+      $('username').value = me.user.username;
+      $('email').value = me.user.email;
+
+      // try load avatar
+      try {
+        const { url } = await api.meAvatarUrl();
+        $('avatar').src = url || 'assets/img/uw.png'; // fallback image you already have
+      } catch { $('avatar').src = 'assets/img/uw.png'; }
+    }
+
+    // --- upload new avatar (S3 signed URL flow) ---
+    $('uploadBtn').addEventListener('click', async () => {
+      const file = $('file').files[0];
+      if (!file) return show('Choose a picture first', false);
+
+      try {
+        // 1) ask backend for a signed PUT URL
+        const up = await api.getUploadUrl(file.name, file.type); // uses /photos/upload-url
+        // 2) PUT the file directly to S3
+        const putRes = await fetch(up.url, { method: 'PUT', headers: { 'Content-Type': file.type }, body: file });
+        if (!putRes.ok) throw new Error('Upload failed');
+        currentAvatarKey = up.key;         // remember key
+        $('avatar').src = URL.createObjectURL(file); // preview immediately
+        show('Photo uploaded. Click "Save Changes" to set as profile picture.');
+      } catch (e) {
+        console.error(e);
+        show('Failed to upload. Try a different image.', false);
+      }
+    });
+
+    // --- save profile changes ---
+    $('saveBtn').addEventListener('click', async () => {
+      const name = $('name').value.trim();
+      const username = $('username').value.trim();
+      const email = $('email').value.trim();
+
+      if (!name || !username || !email) return show('Fill all fields', false);
+
+      try {
+        const body = { name, username, email };
+        if (currentAvatarKey) body.avatarKey = currentAvatarKey;
+        const { user } = await api.updateMe(body);
+        sessionStorage.setItem('me', JSON.stringify({ user })); // refresh cache
+        show('Profile updated!');
+      } catch (e) {
+        show(e?.message || 'Update failed', false);
+      }
+    });
+  </script>
+</body>
 </html>
