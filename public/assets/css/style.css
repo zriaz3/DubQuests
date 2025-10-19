@@ -93,20 +93,3 @@ h2 {
   text-align: center;
   transition: 0.3s;
 }
-
-.navbar li {
-  display: inline-block;
-  margin-right: 15px;
-}
-
-.navbar a {
-  text-decoration: none;
-  color: rgb(51, 0, 111);
-  font-size: 1.3em;
-  font-weight: 500;
-  transition: color 0.2s;
-}
-
-.navbar a:hover {
-  color: rgb(102, 0, 222);
-}
