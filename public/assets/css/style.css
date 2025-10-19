@@ -24,6 +24,7 @@ nav {
     padding: 0px;
     margin: 0px;
     overflow: hidden;
+    text-align: center;
 }
 
 .navbar a {
@@ -31,10 +32,6 @@ nav {
     display: block;
     padding: 5px;
     text-align: center;
-}
-
-.navbar li {
-    float: inline-start;
 }
 
 h2 {
