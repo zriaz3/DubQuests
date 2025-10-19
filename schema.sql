@@ -38,7 +38,12 @@ create unique index if not exists users_email_unique_ci
   on users (lower(email));
 
 -- friendships (unchanged)
-create type if not exists friendship_status as enum ('pending','accepted','blocked');
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'friendship_status') THEN
+    CREATE TYPE friendship_status AS ENUM ('pending','accepted','blocked');
+  END IF;
+END $$ LANGUAGE plpgsql;
 
 create table if not exists friendships (
   id uuid primary key default gen_random_uuid(),
@@ -65,3 +70,9 @@ create table if not exists photos (
 );
 
 create index if not exists photos_owner_idx on photos(owner);
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'friendship_status') THEN
+    CREATE TYPE friendship_status AS ENUM ('pending','accepted','blocked');
+  END IF;
+END $$ LANGUAGE plpgsql;
