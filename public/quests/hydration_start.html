@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DubQuests | Daily Quest</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+    <h2>Complete Daily Quest</h2>
+
+    <section>
+        <h3>Hydration Check!</h3>
+        <p>Take a photo of your water bottle and track your hydration!</p>
+        <p>15 points</p>
+    </section>
+
+    <section>
+        <h3>Upload Your Photo!</h3>
+        <form action="/action_page.php">
+            <input type="file" id="myFile" name="filename">
+        </form>
+    </section>
+
+    <section>
+        <h3>Journal Entry!</h3>
+        <p>Required - Minimum 20 Words</p>
+        <label for="text"></label>
+        <input type="text" id="text"
+            placeholder="Are you hitting your water intake goal? What improvements do you want to make?" required>
+        <!-- word counter here -->
+        <h5>Word Count: 0</h5>
+        <a href="quests/hydration_points.html">
+            <button>Submit Quest!</button>
+        </a>
+
+    </section>
+
+</body>
+
+</html>
