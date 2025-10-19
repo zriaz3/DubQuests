@@ -1,0 +1,39 @@
+# Node.js dependencies
+node_modules/
+
+# Environment variables (never commit secrets)
+.env
+.env.local
+.env.*.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# Build artifacts
+dist/
+build/
+coverage/
+
+# macOS and system files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.swp
+
+# Docker
+docker-compose.override.yml
+*.pid
+
+# IDE/editor settings
+.vscode/
+.idea/
+*.iml
+
+# Local database/data
+dbdata/
