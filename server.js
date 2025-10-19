@@ -18,7 +18,7 @@ const app = express();
 const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:3000',
-  'https://your-netlify-site.netlify.app' // change to your real Netlify domain
+  'https://dubquests.netlify.app' 
 ];
 
 app.use(
@@ -276,7 +276,7 @@ app.listen(PORT, () =>
   console.log(`✅ Friends Photos API running on port ${PORT} and using S3 bucket: ${BUCKET}`)
 );
 
-// who am I (session restore)
+// session restore
 app.get('/me', auth, async (req, res) => {
   const { rows } = await pool.query('select id, email, created_at from users where id=$1', [req.user.uid]);
   if (!rows[0]) return res.status(404).json({ error: 'Not found' });
