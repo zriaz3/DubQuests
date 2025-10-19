@@ -15,11 +15,8 @@
 <body>
   <h2>Create your account</h2>
 
-  <!-- Optional extras (not saved by the current backend yet) -->
-  <input type="text" id="name" placeholder="Name (optional)" />
-  <input type="text" id="username" placeholder="Username (optional)" />
-
-  <!-- These ARE used by the backend -->
+  <input type="text" id="name" placeholder="Name" required/>
+  <input type="text" id="username" placeholder="Username " required/>
   <input type="email" id="email" placeholder="UW Net ID (email)" required />
   <input type="password" id="password" placeholder="Password (min 8)" minlength="8" required />
 
@@ -46,14 +43,10 @@
       if (!email || !password) return show('Enter email and password', false);
 
       try {
-        // Step 1: create account (current backend saves email+password only)
+        
         const { token } = await api.register(email, password);
         auth.set(token);
-        sessionStorage.removeItem('me'); // refresh session cache next page
-
-        // Step 2 (optional later): send profile fields if/when backend supports it
-        // const profile = { name: nameEl.value.trim(), username: userEl.value.trim() };
-        // await api.updateProfile(profile); // only after you add this endpoint
+        sessionStorage.removeItem('me');
 
         goMain();
       } catch (e) {

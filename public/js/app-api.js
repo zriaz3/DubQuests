@@ -19,12 +19,10 @@ async function request(path, { method='GET', body=null, authRequired=false, head
 }
 
 export const api = {
-  register: (email, password) => request('/auth/register', { method:'POST', body:{ email, password } }),
-  login:    (email, password) => request('/auth/login',    { method:'POST', body:{ email, password } }),
-  me:       () => request('/me', { authRequired:true }),
-  presign:  (filename, contentType) =>
-              request('/photos/upload-url', { method:'POST', body:{ filename, contentType }, authRequired:true }),
-  savePhoto:(payload) =>
-              request('/photos', { method:'POST', body:payload, authRequired:true }),
-  feed:     () => request('/feed', { authRequired:true })
+  register: (name, username, email, password) =>
+    request('/auth/register', { method: 'POST', body: { name, username, email, password } }),
+  login: (identifier, password) =>
+    request('/auth/login', { method: 'POST', body: { identifier, password } }),
+  me: () => request('/me', { authRequired: true }),
+  // ... (rest unchanged)
 };

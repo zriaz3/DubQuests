@@ -10,8 +10,35 @@ create table if not exists users (
   created_at timestamptz not null default now()
 );
 
--- friendships (undirected once accepted)
-create type friendship_status as enum ('pending','accepted','blocked');
+-- NEW: add columns if they don't exist yet
+do $$
+begin
+  if not exists (
+    select 1 from information_schema.columns
+    where table_name='users' and column_name='name'
+  ) then
+    alter table users add column name text;
+  end if;
+
+  if not exists (
+    select 1 from information_schema.columns
+    where table_name='users' and column_name='username'
+  ) then
+    alter table users add column username text;
+  end if;
+end $$;
+
+-- make username unique (case-insensitive); duplicate-safe create
+create unique index if not exists users_username_unique_idx
+  on users (lower(username));
+
+-- OPTIONAL but recommended: make email unique case-insensitively too
+drop index if exists users_email_unique; -- if you had a case-sensitive one
+create unique index if not exists users_email_unique_ci
+  on users (lower(email));
+
+-- friendships (unchanged)
+create type if not exists friendship_status as enum ('pending','accepted','blocked');
 
 create table if not exists friendships (
   id uuid primary key default gen_random_uuid(),
@@ -22,15 +49,14 @@ create table if not exists friendships (
   accepted_at timestamptz
 );
 
--- one active edge per unordered pair (pending or accepted)
 create unique index if not exists uniq_pair
 on friendships (least(requester, addressee), greatest(requester, addressee));
 
--- photos metadata; image file goes to S3/R2, not DB
+-- photos (unchanged)
 create table if not exists photos (
   id uuid primary key default gen_random_uuid(),
   owner uuid not null references users(id) on delete cascade,
-  storage_key text not null,        -- e.g., uploads/{owner}/{uuid}.webp
+  storage_key text not null,
   mime text not null,
   bytes int not null check (bytes > 0),
   caption text,

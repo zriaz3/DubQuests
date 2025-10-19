@@ -14,11 +14,14 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 const app = express();
 
+/* ---------- Static (serve your /public when running locally) ---------- */
+app.use(express.static('public'));
+
 /* ---------- Middleware ---------- */
 const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:3000',
-  'https://dubquests.netlify.app' 
+  'https://dubquests.netlify.app' // your Netlify site
 ];
 
 app.use(
@@ -52,7 +55,7 @@ const SIGNED_TTL = parseInt(process.env.SIGNED_URL_TTL_SECONDS || '60', 10);
 /* ---------- Auth helpers ---------- */
 function signToken(user) {
   return jwt.sign(
-    { uid: user.id, email: user.email },
+    { uid: user.id, email: user.email }, // payload kept small on purpose
     process.env.JWT_SECRET,
     { expiresIn: process.env.JWT_EXPIRES || '7d' }
   );
@@ -71,16 +74,30 @@ function auth(req, res, next) {
 }
 
 /* ---------- Validation Schemas ---------- */
+// Signup now collects name + username + email + password
 const RegisterSchema = z.object({
+  name: z.string().trim().min(1, 'Name required').max(120),
+  username: z
+    .string()
+    .trim()
+    .min(3, 'Username too short')
+    .max(30, 'Username too long')
+    .regex(/^[a-z0-9_]+$/i, 'Letters, numbers, underscore only'),
   email: z.string().email(),
   password: z.string().min(8)
 });
-const LoginSchema = RegisterSchema;
+
+// Login accepts either a username OR an email in one field
+const LoginSchema = z.object({
+  identifier: z.string().trim().min(1), // username or email
+  password: z.string().min(8)
+});
 
 const UploadReqSchema = z.object({
   filename: z.string().min(1),
   contentType: z.string().startsWith('image/')
 });
+
 const PhotoCreateSchema = z.object({
   key: z.string().min(1),
   mime: z.string().startsWith('image/'),
@@ -93,39 +110,68 @@ const FriendReqSchema = z.object({ userId: z.string().uuid() });
 const FriendAcceptSchema = z.object({ friendshipId: z.string().uuid() });
 
 /* ---------- Auth Routes ---------- */
+// REGISTER: creates user with name, username, email, password
 app.post('/auth/register', async (req, res) => {
   const parse = RegisterSchema.safeParse(req.body);
   if (!parse.success) return res.status(400).json(parse.error.format());
-  const { email, password } = parse.data;
+  const { name, username, email, password } = parse.data;
 
   const hash = await bcrypt.hash(password, 12);
   try {
     const { rows } = await pool.query(
-      'INSERT INTO users (email, password_hash) VALUES ($1,$2) RETURNING id, email',
-      [email.toLowerCase(), hash]
+      `INSERT INTO users (name, username, email, password_hash)
+       VALUES ($1,$2,$3,$4)
+       RETURNING id, name, username, email`,
+      [name, username, email.toLowerCase(), hash]
     );
     const token = signToken(rows[0]);
     res.json({ user: rows[0], token });
   } catch (e) {
-    if (e.code === '23505') return res.status(409).json({ error: 'Email already exists' });
+    if (e.code === '23505') {
+      // unique_violation – decide which unique hit
+      const detail = (e.detail || '').toLowerCase();
+      if (detail.includes('username')) {
+        return res.status(409).json({ error: 'Username already taken' });
+      }
+      return res.status(409).json({ error: 'Email already exists' });
+    }
     console.error(e);
     res.status(500).json({ error: 'Server error' });
   }
 });
 
+// LOGIN: accepts identifier (username or email) + password
 app.post('/auth/login', async (req, res) => {
   const parse = LoginSchema.safeParse(req.body);
   if (!parse.success) return res.status(400).json(parse.error.format());
-  const { email, password } = parse.data;
+  const { identifier, password } = parse.data;
 
-  const { rows } = await pool.query('SELECT * FROM users WHERE email=$1', [email.toLowerCase()]);
+  const looksEmail = identifier.includes('@');
+  const { rows } = await pool.query(
+    looksEmail
+      ? 'SELECT * FROM users WHERE lower(email) = lower($1)'
+      : 'SELECT * FROM users WHERE lower(username) = lower($1)',
+    [identifier]
+  );
+
   const user = rows[0];
   if (!user) return res.status(401).json({ error: 'Invalid credentials' });
+
   const ok = await bcrypt.compare(password, user.password_hash);
   if (!ok) return res.status(401).json({ error: 'Invalid credentials' });
 
   const token = signToken(user);
-  res.json({ user: { id: user.id, email: user.email }, token });
+  res.json({ user: { id: user.id, name: user.name, username: user.username, email: user.email }, token });
+});
+
+/* ---------- Session restore ---------- */
+app.get('/me', auth, async (req, res) => {
+  const { rows } = await pool.query(
+    'SELECT id, name, username, email, created_at FROM users WHERE id = $1',
+    [req.user.uid]
+  );
+  if (!rows[0]) return res.status(404).json({ error: 'Not found' });
+  res.json({ user: rows[0] });
 });
 
 /* ---------- Friendships ---------- */
@@ -273,12 +319,5 @@ app.get('/healthz', (_req, res) => res.send('ok'));
 /* ---------- Start Server ---------- */
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () =>
-  console.log(`✅ Friends Photos API running on port ${PORT} and using S3 bucket: ${BUCKET}`)
+  console.log(`✅ Friends Photos API running on :${PORT} (S3 bucket: ${BUCKET})`)
 );
-
-// session restore
-app.get('/me', auth, async (req, res) => {
-  const { rows } = await pool.query('select id, email, created_at from users where id=$1', [req.user.uid]);
-  if (!rows[0]) return res.status(404).json({ error: 'Not found' });
-  res.json({ user: rows[0] });
-});
