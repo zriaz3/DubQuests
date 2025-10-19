@@ -105,3 +105,10 @@ h2 {
 #logoutBtn:hover {
   color: rgb(102, 0, 222);
 }
+
+.navbar a,
+.navbar a:link,
+.navbar a:visited { color: rgb(51, 0, 111); }
+
+.navbar a:hover,
+.navbar a:active { color: rgb(102, 0, 222); }
