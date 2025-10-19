@@ -20,6 +20,7 @@
             <li><a href="journal.html">Journal</a></li>
             <li><a href="memories.html">Memories</a></li>
             <li><a href="profile.html">Profile</a></li>
+            <button id="logoutBtn">Logout</button>
         </ul>
     </nav>
 
@@ -46,6 +47,13 @@
     <p>Share a post-workout selfie or...</p>
     <p>Today I hit a new PR of 100...</p>
     <p>10-4-25</p>
+
+    <script type="module">
+        import { logout } from './js/auth-guard.js';
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+        logout();
+        });
+    </script>
 </body>
 
 </html>
