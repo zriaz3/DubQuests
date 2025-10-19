@@ -1,20 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DubQuests | Sign In</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DubQuests | Sign Up</title>
+  <style>
+    body { font-family: system-ui, Arial; max-width: 420px; margin: 3rem auto; }
+    input, button { width:100%; padding:10px; margin:8px 0; box-sizing:border-box; }
+    button { background:#4f46e5; color:#fff; border:none; border-radius:8px; cursor:pointer; }
+    button:hover { background:#4338ca; }
+    .msg { min-height: 1.2rem; }
+  </style>
 </head>
-
 <body>
-    <label for="email"></label>
-    <input type="email" id="email" placeholder="UW Net ID" required>
+  <h2>Create your account</h2>
 
-    <label for="password"></label>
-    <input type="password" id="password" placeholder="Password" required>
-    <p>New? <a href="main.html">Sign up</a></p>
-    <!-- you also choose what times you are free to complete quests so you don’t get notified based on week days and week end -->
+  <!-- Optional extras (not saved by the current backend yet) -->
+  <input type="text" id="name" placeholder="Name (optional)" />
+  <input type="text" id="username" placeholder="Username (optional)" />
+
+  <!-- These ARE used by the backend -->
+  <input type="email" id="email" placeholder="UW Net ID (email)" required />
+  <input type="password" id="password" placeholder="Password (min 8)" minlength="8" required />
+
+  <button id="signUpBtn" type="button">Sign Up</button>
+  <div id="msg" class="msg"></div>
+
+  <p>Already have an account? <a href="sign_in.html">Sign in</a></p>
+
+  <script type="module">
+    import { api, auth } from './js/app-api.js';
+
+    const msg = document.getElementById('msg');
+    const nameEl = document.getElementById('name');
+    const userEl = document.getElementById('username');
+    const emailEl = document.getElementById('email');
+    const passEl  = document.getElementById('password');
+
+    const show = (m, ok=true) => { msg.style.color = ok ? 'green' : 'crimson'; msg.textContent = m; };
+    const goMain = () => { window.location.href = 'main.html'; };
+
+    document.getElementById('signUpBtn').addEventListener('click', async () => {
+      const email = emailEl.value.trim();
+      const password = passEl.value;
+      if (!email || !password) return show('Enter email and password', false);
+
+      try {
+        // Step 1: create account (current backend saves email+password only)
+        const { token } = await api.register(email, password);
+        auth.set(token);
+        sessionStorage.removeItem('me'); // refresh session cache next page
+
+        // Step 2 (optional later): send profile fields if/when backend supports it
+        // const profile = { name: nameEl.value.trim(), username: userEl.value.trim() };
+        // await api.updateProfile(profile); // only after you add this endpoint
+
+        goMain();
+      } catch (e) {
+        show(e.message || 'Sign-up failed', false);
+      }
+    });
+  </script>
 </body>
-
 </html>
