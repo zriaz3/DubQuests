@@ -37,7 +37,10 @@ app.use(morgan('dev'));
 
 /* ---------- Database ---------- */
 const { Pool } = pkg;
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }
+});
 
 /* ---------- AWS S3 ---------- */
 const s3 = new S3Client({

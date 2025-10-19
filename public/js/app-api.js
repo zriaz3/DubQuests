@@ -1,7 +1,7 @@
 // public/js/app-api.js
 export const API_BASE = window.location.hostname.includes('localhost')
   ? 'http://localhost:3000'
-  : 'https://<your-render-service>.onrender.com';   // ← change to your Render URL
+  : 'https://dubquests.onrender.com';   
 
 export const auth = {
   token: () => localStorage.getItem('token'),
@@ -19,7 +19,7 @@ async function request(path, { method='GET', body=null, authRequired=false, head
 }
 
 export const api = {
-  register: (name, username, email, password) =>
+  register: ({ name, username, email, password }) =>
     request('/auth/register', { method: 'POST', body: { name, username, email, password } }),
   login: (identifier, password) =>
     request('/auth/login', { method: 'POST', body: { identifier, password } }),

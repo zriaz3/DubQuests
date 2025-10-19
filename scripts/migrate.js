@@ -8,7 +8,10 @@ const { Pool } = pg;
 const sql = fs.readFileSync(path.resolve('schema.sql'), 'utf8');
 
 // Connect to the database using .env
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }
+});
 
 const run = async () => {
   const client = await pool.connect();
