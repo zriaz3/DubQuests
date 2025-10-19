@@ -24,17 +24,16 @@ nav {
     padding: 0px;
     margin: 0px;
     overflow: hidden;
+    display: inline-flex;
+    gap: 16px;
 }
 
 .navbar a {
+    color: rgb(51, 0, 111);
     text-decoration: none;
-    display: block;
-    padding: 5px;
-    text-align: center;
-}
-
-.navbar li {
-    float: inline-start;
+    font-size: 1.1em;
+    font-weight: 500;
+    transition: color 0.2s;
 }
 
 h2 {
