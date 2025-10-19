@@ -41,31 +41,51 @@
     <p>Make new friends and compete with them!</p><br>
     <p>Earn points and climb leaderboards!</p>
 
-    <!-- ✅ Add this script at the very end -->
+   
     <script type="module">
-        import { api, auth } from './js/app-api.js';
+    import { api, auth } from './js/app-api.js';
 
-        const form = document.getElementById('loginForm');
-        const emailEl = document.querySelector('.sign_email');
-        const passEl = document.querySelector('.sign_password');
+    const form = document.getElementById('loginForm');
+    const emailEl = document.querySelector('.sign_email');
+    const passEl  = document.querySelector('.sign_password');
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
+    let msg = document.getElementById('msg');
+    if (!msg) {
+        msg = document.createElement('div');
+        msg.id = 'msg';
+        msg.style.minHeight = '1.2rem';
+        msg.style.marginTop = '6px';
+        form.appendChild(msg);
+    }
 
-            const identifier = emailEl.value.trim();
-            const password = passEl.value;
+    const show = (text, ok = true) => {
+        msg.textContent = text;
+        msg.style.color = ok ? 'green' : 'crimson';
+    };
 
-            if (!identifier || !password) return;
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const identifier = emailEl.value.trim();
+        const password = passEl.value;
+        if (!identifier || !password) return;
 
-            try {
-                const { token } = await api.login(identifier, password);
-                auth.set(token);
-                sessionStorage.removeItem('me');
-                window.location.href = 'main.html';
-            } catch (err) {
-                alert(err?.message || 'Sign-in failed');
-            }
-        });
+        show('Signing you in…');
+        try {
+        const { token } = await api.login(identifier, password);
+        auth.set(token);
+        sessionStorage.removeItem('me');
+        show('Success!');
+        window.location.href = 'main.html';
+        } catch (err) {
+        // 🆕 custom friendly message
+        if (err?.message?.includes('Invalid credentials')) {
+            show('Incorrect email or password. Please try again.', false);
+        } else {
+            show('Could not connect. Please check your network or try again.', false);
+        }
+        }
+    });
     </script>
+
 </body>
 </html>
