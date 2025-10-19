@@ -5,19 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>DubQuests | Profile</title>
   <link rel="stylesheet" href="assets/css/style.css">
-  <style>
-    .profile-card { max-width: 520px; margin: 1.5rem auto; background:#fff; border-radius:12px; padding:16px; }
-    .row { display:flex; gap:12px; margin:.5rem 0; align-items:center; }
-    .row label { width:110px; text-align:right; }
-    .row input { flex:1; padding:8px; }
-    .avatar { width:120px; height:120px; border-radius:50%; object-fit:cover; background:#eee; }
-    .actions { display:flex; gap:10px; justify-content:flex-end; margin-top: 10px; }
-    .btn { padding:10px 14px; border-radius:8px; border:none; background:#4f46e5; color:#fff; cursor:pointer; }
-    .btn:disabled { opacity:.6; cursor:not-allowed; }
-    #msg { min-height:1.2rem; margin-top:8px; text-align:center; }
-    .navwrap { text-align:center; margin-bottom:8px; }
-    .navwrap a { margin-right:12px; color:rgb(51,0,111); text-decoration:none; }
-  </style>
 </head>
 <body>
   <header>DubQuests</header>
@@ -95,12 +82,12 @@
 
       try {
         // 1) ask backend for a signed PUT URL
-        const up = await api.getUploadUrl(file.name, file.type); // uses /photos/upload-url
+        const up = await api.getUploadUrl(file.name, file.type); 
         // 2) PUT the file directly to S3
         const putRes = await fetch(up.url, { method: 'PUT', headers: { 'Content-Type': file.type }, body: file });
         if (!putRes.ok) throw new Error('Upload failed');
-        currentAvatarKey = up.key;         // remember key
-        $('avatar').src = URL.createObjectURL(file); // preview immediately
+        currentAvatarKey = up.key;         
+        $('avatar').src = URL.createObjectURL(file); 
         show('Photo uploaded. Click "Save Changes" to set as profile picture.');
       } catch (e) {
         console.error(e);
@@ -120,7 +107,7 @@
         const body = { name, username, email };
         if (currentAvatarKey) body.avatarKey = currentAvatarKey;
         const { user } = await api.updateMe(body);
-        sessionStorage.setItem('me', JSON.stringify({ user })); // refresh cache
+        sessionStorage.setItem('me', JSON.stringify({ user })); 
         show('Profile updated!');
       } catch (e) {
         show(e?.message || 'Update failed', false);
