@@ -39,7 +39,7 @@ nav {
     background-color: white;
     border-radius: 15px;
     width: 350px;
-    height: 150px;
+    height: 145px;
     margin: auto;
 }
 
@@ -81,6 +81,41 @@ nav {
     width: 150px;
     height: 35px;
     border-radius: 30px;
-    float: left;
-    float: right;
+
+}
+
+#points_box {
+    color: rgb(201, 175, 118);
+    width: 150px;
+    height: 40px;
+}
+
+#timed_box1 {
+    position: relative;
+    border: 10px solid white;
+    background-color: white;
+    border-radius: 15px;
+    width: 350px;
+    height: 162px;
+    margin: auto;
+}
+
+#timedbutton {
+    background-color: rgb(51, 0, 111);
+    color: rgb(201, 175, 118);
+    width: 150px;
+    height: 35px;
+    border-radius: 30px;
+}
+
+#comingsoonbox {
+    position: relative;
+    border: 10px solid rgb(156, 127, 190);
+    background-color: rgb(156, 127, 190);
+    color: rgb(59, 38, 82);
+    border-radius: 15px;
+    width: 350px;
+    height: 120px;
+    margin: auto;
+    margin-top: 15px;
 }
