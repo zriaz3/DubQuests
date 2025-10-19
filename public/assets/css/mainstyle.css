@@ -10,10 +10,6 @@ body {
     font-family: Tahoma, sans-serif;
 }
 
-#subtitle {
-    color: rgb(145, 123, 76);
-}
-
 nav {
     width: 80%;
     margin: 0 auto;
@@ -37,52 +33,54 @@ nav {
     float: inline-start;
 }
 
-h2 {
-    text-align: center;
-}
-
-.box {
-    border: 50px solid white;
+#dq_box {
+    position: relative;
+    border: 10px solid white;
     background-color: white;
     border-radius: 15px;
-    width: 250px;
-    height: 250px;
+    width: 350px;
+    height: 150px;
     margin: auto;
 }
 
-#welcome {
-    color: rgb(51, 0, 111);
-    font-size: 30px;
+#points_box1 {
+    position: absolute;
+    top: 0;
+    right: 0;
 }
 
-.sign_email {
-    font-size: 20px;
-    padding: 10px;
-    background-color: rgb(224, 224, 224);
-    border: rgb(224, 224, 224);
-    width: 250px;
-    height: 50px;
-    margin-bottom: 10px;
-
-
-}
-
-.sign_password {
-    font-size: 20px;
-    padding: 10px;
-    background-color: rgb(224, 224, 224);
-    width: 250px;
-    height: 50px;
-    border: rgb(224, 224, 224);
-}
-
-.sign_button {
+#start_box1 {
+    position: absolute;
+    bottom: 0;
+    left: 0;
     width: 150px;
-    height: 50px;
+    height: 35px;
     margin-top: 10px;
     background-color: rgb(51, 0, 111);
-    color: white;
     font-size: 1.2em;
     border-radius: 30px;
     border: solid rgb(51, 0, 111);
+}
+
+#change {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 150px;
+    height: 35px;
+    margin-top: 10px;
+    background-color: rgb(51, 0, 111);
+    font-size: 1.2em;
+    border-radius: 30px;
+    border: solid rgb(51, 0, 111);
+}
+
+#questbutton {
+    background-color: rgb(51, 0, 111);
+    color: rgb(201, 175, 118);
+    width: 150px;
+    height: 35px;
+    border-radius: 30px;
+    float: left;
+    float: right;
 }

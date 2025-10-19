@@ -5,18 +5,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DubQuests | Quests</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="assets/css/mainstyle.css">
 </head>
 
 <body>
-    <h1>DubQuests</h1>
-    <h3>What will you achieve today?</h3>
+    <header>DubQuests</header>
+    <h3 id="subtitle">What will you achieve today?</h3>
+    <div class="box" id="points_box">
+        <p>Your Points: 100</p>
+    </div>
     <hr>
 
     <nav class="navbar">
         <ul>
-            <li><a href="main.html">Home</a></li>
-            <li><a href="friends.html">Friends</a></li>
+            <li><a href="main.html"></a>Home</a></li>
+            <li><a href="friend/friends.html">Friends</a></li>
             <li><a href="journal.html">Journal</a></li>
             <li><a href="memories.html">Memories</a></li>
             <li><a href="profile.html">Profile</a></li>
@@ -24,17 +27,23 @@
     </nav>
 
     <h2>Today's Daily Quest</h2>
-    <h3>Hydration Check!</h3>
-    <p>Take a photo of your water bottle and track your hydration!</p>
-    <p>15 points</p>
+    <div class="box" id="dq_box">
+        <h3>Hydration Check!</h3>
+        <p>Take a photo of your water bottle and track your hydration!</p>
+        <div class="box" id="points_box1">
+            <p>15 points</p>
+        </div>
 
-    <a href="quests/hydration_start.html">
-        <button>Start Quest</button>
-    </a>
 
-    <a href="quests/hydration_change.html">
-        <button>Change</button>
-    </a>
+        <a href="quests/hydration_start.html">
+            <button class="button" id="questbutton">Start Quest</button>
+        </a>
+
+
+        <a href="quests/hydration_change.html">
+            <button class="button" id="questbutton">Change</button>
+        </a>
+    </div>
 
     <h2>Timed Quests</h2>
     <p>Complete within 60 mins!</p>

@@ -4,8 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/assets/img/dubquests.png">
     <title>DubQuests</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
 
 <body>
@@ -13,40 +14,34 @@
     <h3 id="subtitle">What will you achieve today?</h3>
     <hr>
 
-    <nav class="navbar">
-        <ul>
-            <li><a href="main.html">Home</a></li>
-            <li><a href="friend/friends.html">Friends</a></li>
-            <li><a href="journal.html">Journal</a></li>
-            <li><a href="memories.html">Memories</a></li>
-            <li><a href="profile.html">Profile</a></li>
-        </ul>
-    </nav>
+
+    <div class="login">
+        <form action="/login" methods="post">
+
+            <div class="box">
+
+                <h2 id="welcome">Welcome!</h2>
 
 
-    <form action="index.php" methods="POST">
+                <label for="email"></label>
+                <input type="email" class="sign_email" placeholder="UW Net ID" required>
 
-        <h2>Welcome!</h2>
-
-        <label for="email"></label>
-        <input type="email" id="email" placeholder="UW Net ID" required>
-
-        <label for="password"></label>
-        <input type="password" id="password" placeholder="Password" required>
-
-        <button type="submit" href="main.html">Sign In</button>
-        <p>New? <a href="sign_in.html">Sign up</a></p>
-
-        <img src="uw.png">
-
-        <p>Complete quests around campus!</p><br>
-        <p>Make new friends and compete with them!</p><br>
-        <p>Earn points and climb leaderboards!</p>
+                <label for="password"></label>
+                <input type="password" class="sign_password" placeholder="Password" required>
+            </div>
 
 
+            <button class="sign_button" type="submit" href="main.html">Sign In</button>
+            <p>New? <a href="sign_in.html">Sign up</a></p>
 
-    </form>
+        </form>
+    </div>
 
+    <img src="uw.png" height="40">
+
+    <p>Complete quests around campus!</p><br>
+    <p>Make new friends and compete with them!</p><br>
+    <p>Earn points and climb leaderboards!</p>
 
 
 
